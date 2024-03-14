@@ -22,12 +22,23 @@ app.use('/api/products', productsRouter);
 
 // Get products
 productsRouter.get('/', async (req, res) => {
-    const products = await productManager.getProducts();
+    /*const products = await productManager.getProducts();
     const { limit } = req.query;
     if(!limit)
         res.status(200).json(products);
     else
         res.status(200).json(products.slice(0, parseInt(limit)));
+    */
+    try {
+        const products = await productManager.getProducts();
+        const { limit } = req.query;
+        if(!limit)
+            res.status(200).json(products);
+        else
+            res.status(200).json(products.slice(0, parseInt(limit)));
+    } catch (error) {
+        res.status(500).send('Internal server error');
+    }
 })
 
 // Get product by id
@@ -37,7 +48,7 @@ productsRouter.get('/:pid', async (req, res) =>{
     if(product){
         return res.status(200).json(product);
     }else{
-        return res.status(404).send('Producto no encontrado.');
+        return res.status(404).send('Product not found.');
     }
 });
 
@@ -137,6 +148,9 @@ cartRouter.post('/:cid/product/:pid', async (req, res) => {
     
 })
 
-app.listen(8080, () =>{
-    console.log('Servidor escuchando en puerto 8080.');
+const PORT = 8080;
+
+// Inicio el servidor
+app.listen(PORT, () => {
+    console.log(`Server running in http://localhost:${PORT}/`);
 });
